@@ -6,7 +6,7 @@ import (
 	"net/rpc"
 )
 
-// TODO move to shared lib
+// TODO move common code to shared lib
 type RegisterArgs struct {
 	Worker string
 }
@@ -22,6 +22,25 @@ type DoTaskArgs struct {
 type DoTaskReply struct {
 	OK bool
 }
+
+func Dial(host string, rpcname string,
+	args interface{}, reply interface{}) bool {
+	c, err := rpc.Dial("tcp", host)
+	if err != nil {
+		return false
+	}
+	defer c.Close()
+
+	err = c.Call(rpcname, args, reply)
+	if err == nil {
+		return true
+	}
+
+	log.Println(err)
+	return false
+}
+
+/// end common things that need to move to lib
 
 type Master struct {
 	l               net.Listener
@@ -80,20 +99,10 @@ func (m *Master) doWork() {
 
 	for w := range m.registerChannel {
 		log.Printf("Got a worker %s", w)
-
-		c, err := rpc.Dial("tcp", "127.0.0.1:1235") // TODO: no magic strings for master settings
-		if err != nil {
-			log.Fatal("dialing:", err)
-		}
-
 		// Synchronous call
 		args := &DoTaskArgs{"task A"}
 		var reply DoTaskReply
-		err = c.Call("Worker.DoTask", args, &reply)
-		defer c.Close()
-		if err != nil {
-			log.Fatal("Error connecting to worker: %s", err)
-		}
+		Dial("127.0.0.1:1235", "Worker.DoTask", args, &reply)
 		log.Printf("Result from worker: %v", reply.OK)
 	}
 
