@@ -16,6 +16,7 @@ type wordCount struct {
 }
 
 func main() {
+
 	// 1. read contents from file
 	// 2. count words
 	// 3. print results

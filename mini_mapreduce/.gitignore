@@ -1,0 +1,3 @@
+singlecore
+multicore_select
+multicore_mutex
