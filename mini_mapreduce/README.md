@@ -1,7 +1,7 @@
-Outline
+Approach
 ======
 
-## Single machine, serial 
+## Single machine, serial - singlecore.go
 * reads in file
 * runs map phase where it keeps count of each word found
 * program exits prints listing of all words in sorted order
@@ -14,3 +14,4 @@ Outline
 * program exits prints listing of all words in sorted order
 
 ## Distributed
+TBD
